@@ -40,18 +40,11 @@ app.post('/', function(req, res) {
     var isNumber = 0;
     if (isNaN(movieName)) {
         url = 'http://www.imdb.com/find?q=' + movieName + '&s=tt';
-        isNumber = 0;
-    } else {
-        url = 'http://www.imdb.com/title/tt' + movieName + '/';
-        isNumber = 1;
-    }
-
-    //
-//insert something
- var collection = db.get('movies');
-  collection.insert({
-       "movie":movieName
-    }, function (err, doc) {
+		
+		var collection = db.get('movies');
+		collection.insert({
+			"movie":movieName
+		}, function (err, doc) {
         if (err) {
             // If it failed, return error
             console.log("There was a problem adding the information to the database.");
@@ -60,7 +53,17 @@ app.post('/', function(req, res) {
             // And forward to success page
             console.log("userlist");
         }
-    });
+		});
+		
+        isNumber = 0;
+    } else {
+        url = 'http://www.imdb.com/title/tt' + movieName + '/';
+        isNumber = 1;
+    }
+
+    //
+//insert something
+ 
 
 
 
@@ -113,11 +116,11 @@ app.post('/', function(req, res) {
 
 
         if (isNumber == 1) {
-            var html = 'Movie: ' + title + '.<br>' + 'Release: ' + release + '.<br>' + 'Rating: ' + rating + '.<br>' + '.<br>' + tdtotal +
-                '<a href="/">Try again.</a>';
+            var html = '<a href="/">Try again.</a>'+'<br>'+'<a href="/search">Stats.</a>'+'<br>'+'Movie: ' + title + '.<br>' + 'Release: ' + release + '.<br>' + 'Rating: ' + rating + '.<br>' + '.<br>' + tdtotal;
+                
         } else {
-            var html = tdtotal +
-                '<a href="/">Try again.</a>';
+            var html = '<a href="/">Try again.</a>'+'<br>'+'<a href="/search">Stats.</a>'+ '.<br>'+tdtotal ;
+                
         }
 
         res.send(html);
@@ -129,8 +132,8 @@ app.get('/collections',function(req,res){
     res.json(names);
   })
 });
-app.get('/:name',function(req,res){
-  var collection = db.get(req.params.name);
+app.get('/search',function(req,res){
+  var collection = db.get('movies');
   collection.find({},{_id:0} ,function(e,docs){
     res.json(docs);
   })
@@ -139,24 +142,3 @@ app.get('/:name',function(req,res){
 app.listen('8081')
 console.log('Listening on port 8081');
 exports = module.exports = app;
-
-
-
-
-
-
-//test code
-
-/* 
-var app = new express();
-
-app.use(express.static(__dirname + '/public'));
-app.get('/',function(req,res){
-  db.driver.admin.listDatabases(function(e,dbs){
-      res.json(dbs);
-  });
-});
-
-
-app.listen(3000) */
-//end test
